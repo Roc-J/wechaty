@@ -47,3 +47,22 @@
 6. say(content:string):promise 给联系人发消息
 
 ## Room ##
+> Room这个是封装的群对象
+
+* say(content:string,replyTo:Contact|ContactArray):Promise 在群里发信息  
+* refresh()：Promise 刷新群的数据
+
+## Room Event ##
+> 封装的群消息
+
+* join 事件 当群里有人加入的时候触发该事件  
+* leave事件 当群里有人退群的时候触发该事件  
+* topic事件 当修改群名的时候触发该事件  
+
+## FriendRequest ##
+> 朋友请求加好友一系列事件
+
+* hello:string 得到朋友请求验证的内容  
+* accept():Promise 接受朋友的请求  
+* send(contact:Contact,hello:string):Promise 发送一个新的朋友请求
+
