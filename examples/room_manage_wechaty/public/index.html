@@ -8,6 +8,32 @@
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
+<script>
+function validateForm() {
+    var form = document.forms["myForm"];
+    var name = form["name"].value;
+    var fage = form['age'].value;
+    var age = new Number(fage);
+    var number = form['number'].value;
+
+
+    if (name == null || name == "") {
+        alert("姓名必须填写");
+        form.name.focus();   
+        return false;
+    }
+
+    if (isNaN(age) || age == null || age == "" || age < 0 || age >120) {
+        alert('年龄填写错误!');
+        return false;
+    }
+
+    if (number == null || number == "" || number.length!=11) {
+        alert('手机号填写错误!');
+        return false;
+    }
+}
+</script>
 
 <body>
     <div class="container">
@@ -15,44 +41,43 @@
             <h1>欢迎您！</h1>
             <p>请填写您的基本信息，我们将拉您入群。</p>
             <p><a class="btn btn-primary btn-lg" role="button">
-			了解更多</a>
+            了解更多</a>
             </p>
         </div>
-        <form class="form-horizontal" role="form" action="/result" method="POST">
-        <div class="form-group">
-            <label class="col-sm-2 control-label">
-                输入姓名：
-            </label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" name="name">
+        <form name="myForm" class="form-horizontal" role="form" action="/result" onsubmit="return validateForm()" method="POST">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    输入姓名：
+                </label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="name">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">
-                输入年龄：
-            </label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" name="age">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    输入年龄：
+                </label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="age">
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label class="col-sm-2 control-label">
-                输入手机：
-            </label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" name="number">
+            <div class="form-group">
+                <label class="col-sm-2 control-label">
+                    输入手机：
+                </label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" name="number">
+                </div>
             </div>
-        </div>
-
-        <div class="form-group has-success">
-            <label class="col-sm-4 control-label" for="inputError">              
-            </label>
-            <div class="col-sm-4">
-                <button type="submit" class="btn btn-primary btn-lg ">提交</button>
-                <button type="reset" class="btn btn-primary btn-lg ">重置</button>
+            <div class="form-group has-success">
+                <label class="col-sm-4 control-label" for="inputError">
+                </label>
+                <div class="col-sm-4">
+                    <button type="submit" class="btn btn-primary btn-lg ">提交</button>
+                    <button type="reset" class="btn btn-primary btn-lg ">重置</button>
+                </div>
             </div>
-        </div>
-    </form>
+        </form>
     </div>
 </body>
 
