@@ -1,4 +1,4 @@
-const { Wechaty, MediaMessage, Room } = require('wechaty')
+const { Wechaty ,Room } = require('wechaty') 
 const bot = Wechaty.instance()
 
 var express = require('express');
@@ -25,8 +25,43 @@ bot
     console.log(`${user} logout!`)
 })
 
-.on('message', message => {
+.on('message', async function(message){
+    const contact = message.from()
+    const content = message.content()
+    const room = message.room()
+
+    if(room){
+        console.log(`Room: ${room.topic()} Contact: ${contact.name()} Content: ${content}`)
+    } else{
+        console.log(`Contact: ${contact.name()} Content: ${content}`)
+    }
+
+    if(message.self()){
+        return
+    }
+
+    if(/hello/.test(content)){
+        message.say("hello how are you")
+    }
+
+    if(/room/.test(content)){
+        let keyroom = await Room.find({topic: "test"})
+        if(keyroom){
+            await keyroom.add(contact)
+            await keyroom.say("welcome!", contact)
+        }
+    }
+
+    if(/out/.test(content)){
+        let keyroom = await Room.find({topic: "test"})
+        if (keyroom){
+            await keyroom.say("Remove from the room", contact)
+            await keyroom.del(contact)
+        }
+    }
     try {
+        const room = message.room()
+
         /*const room = message.room()
         console.log((room ? '[' + room.topic() + ']' : '') + '<' + message.from().name() + '>' + ': ' + message.content())
         if (/^(ding|ping|code|bing)$/i.test(message.content()) && !message.self()) {
@@ -78,22 +113,22 @@ bot
         }
         if (/^确认$/i.test(message.content()) && !message.self()) {
             message.say('恭喜您，审核通过');
-            const contact = message.from();
-            let joinroom = await Room.find({ topic: "test" })
-            if (joinroom) {
-                await joinroom.add(contact)
-                joinroom.say("welcome!", contact)
-            }
+            // const contact = message.from();
+            // let joinroom = await Room.find({ topic: "test" });
+            // if (joinroom) {
+            //     await joinroom.add(contact);
+            //     joinroom.say("welcome!", contact);
+            // }
 
         }
         if (/^错误$/i.test(message.content()) && !message.self()) {
             sex = message.from().gender();
             if (sex == 1) {
-                message.say('王子，对不起，服务器开了个小差，请重新填写吧~')
+                message.say('王子，对不起，服务器开了个小差，请重新填写吧~');
             } else {
-                message.say('公主，对不起，服务器开了个小差，请重新填写吧~')
+                message.say('公主，对不起，服务器开了个小差，请重新填写吧~');
             }
-            message.say('http://192.168.1.111:8081/')
+            message.say('http://192.168.1.111:8081/');
         }
 
     } catch (error) {
