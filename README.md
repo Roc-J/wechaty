@@ -44,7 +44,7 @@ wechaty是一个简单的chatbot机器人，通过使用wechaty的API接口，�
 	cd examples
 	node server.js
 
-![](http://i.imgur.com/TZ9li1f.png)
+![](http://i.imgur.com/3H0E55T.png)
 
 运行后会出现一个二维码，扫描即可登录。
 
