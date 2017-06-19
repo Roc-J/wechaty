@@ -1,8 +1,43 @@
-const { Wechaty ,Room } = require('wechaty') 
+const { Wechaty, Room } = require('wechaty')
+
+var MongoClient = require('mongodb').MongoClient;
+var DB_CONN_STR = 'mongodb://localhost:27017/qjk';
+var path = require('path');
+//插入
+var insertData = function(db, data, callback) {
+    var collection = db.collection('site');
+
+    //插入数据
+    collection.insert(data, function(err, result) {
+        if (err) {
+            console.log('Error : ', err);
+            return;
+        }
+
+        callback(result);
+    });
+}
+
+//查询
+var selectData = function(db, whereStr, callback) {
+    //连接列表
+    var collection = db.collection('site');
+    collection.find(whereStr).toArray(function(err, result) {
+        if (err) {
+            console.log('Error :' + err);
+            return;
+        }
+
+        callback(result);
+    });
+}
+
 const bot = Wechaty.instance()
 
 var express = require('express');
 var app = express();
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
 var bodyParser = require('body-parser');
 
 var response = "";
@@ -25,36 +60,14 @@ bot
     console.log(`${user} logout!`)
 })
 
-.on('message', async function(message){
+.on('message', async function(message) {
     const contact = message.from()
     const content = message.content()
     const room = message.room()
 
-    if(room){
-        console.log(`Room: ${room.topic()} Contact: ${contact.name()} Content: ${content}`)
-    } else{
-        console.log(`Contact: ${contact.name()} Content: ${content}`)
-    }
-
-    if(message.self()){
-        return
-    }
-
-    if(/hello/.test(content)){
-        message.say("hello how are you")
-    }
-
-    if(/room/.test(content)){
-        let keyroom = await Room.find({topic: "test"})
-        if(keyroom){
-            await keyroom.add(contact)
-            await keyroom.say("welcome!", contact)
-        }
-    }
-
-    if(/out/.test(content)){
-        let keyroom = await Room.find({topic: "test"})
-        if (keyroom){
+    if (/out/.test(content)) {
+        let keyroom = await Room.find({ topic: "test" })
+        if (keyroom) {
             await keyroom.say("Remove from the room", contact)
             await keyroom.del(contact)
         }
@@ -102,23 +115,23 @@ bot
 
             })
 
-            var server = app.listen(8081, function() {
-
-                var host = server.address().address
-                var port = server.address().port
-                console.log("应用实例，访问地址为 http://%s:%s", host, port)
-
-            })
-
         }
         if (/^确认$/i.test(message.content()) && !message.self()) {
             message.say('恭喜您，审核通过');
-            // const contact = message.from();
-            // let joinroom = await Room.find({ topic: "test" });
-            // if (joinroom) {
-            //     await joinroom.add(contact);
-            //     joinroom.say("welcome!", contact);
-            // }
+            MongoClient.connect(DB_CONN_STR, function(err, db) {
+                console.log("连接成功！");
+                console.log(response)
+                insertData(db, response, function(result) {
+                    console.log(result);
+                    db.close();
+                });
+            });
+            const contact = message.from();
+            let joinroom = await Room.find({ topic: "test" });
+            if (joinroom) {
+                await joinroom.add(contact);
+                joinroom.say("welcome!", contact);
+            }
 
         }
         if (/^错误$/i.test(message.content()) && !message.self()) {
@@ -131,9 +144,37 @@ bot
             message.say('http://192.168.1.111:8081/');
         }
 
+        if (/^查看$/i.test(message.content()) && message.self()) {
+
+        }
+
     } catch (error) {
         console.log('error: ' + error)
     }
 })
 
 .init()
+
+var server = app.listen(8081, function() {
+
+    var host = server.address().address
+    var port = server.address().port
+    console.log("应用实例，访问地址为 http://%s:%s", host, port)
+
+})
+
+MongoClient.connect(DB_CONN_STR, function(err, db) {
+    console.log('连接成功');
+    var whereStr = {}
+    selectData(db, whereStr, function(result) {
+        console.log(result);
+        
+        //message.say('http://192.168.1.111:8081/info');
+        app.get('/info', function(req, res) {
+            res.render('index', {
+                arrs: result
+            });
+        })
+        db.close();
+    });
+});

@@ -53,6 +53,7 @@
       "resolved": "https://registry.npmjs.org/ee-first/-/ee-first-1.1.1.tgz",
       "version": "1.1.1"
     },
+    "ejs": "^2.5.6",
     "encodeurl": {
       "integrity": "sha1-eePVhlU0aQn+bw9Fpd5oEDspTSA=",
       "resolved": "https://registry.npmjs.org/encodeurl/-/encodeurl-1.0.1.tgz",
@@ -129,6 +130,7 @@
       "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.15.tgz",
       "version": "2.1.15"
     },
+    "mongodb": "^2.2.28",
     "ms": {
       "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=",
       "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
