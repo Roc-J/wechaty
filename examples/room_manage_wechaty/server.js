@@ -90,7 +90,7 @@ bot
     const room = message.room()
 
     if (/^退群$/i.test(content)) {
-        let keyroom = await Room.find({ topic: "test" })
+        let keyroom = await Room.find({ topic: "wechaty" })
         if (keyroom) {
             await keyroom.say("Remove from the room", contact)
             await keyroom.del(contact)
@@ -164,7 +164,7 @@ bot
                 });
             });
             const contact = message.from();
-            let joinroom = await Room.find({ topic: "test" });
+            let joinroom = await Room.find({ topic: "wechaty" });
             if (joinroom) {
                 await joinroom.add(contact);
                 joinroom.say("welcome!", contact);
