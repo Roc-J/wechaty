@@ -65,3 +65,9 @@ wechaty是一个简单的chatbot机器人，通过使用wechaty的API接口，�
 ## 群通讯录 ##
 
 ![](http://i.imgur.com/koD9Tas.png)
+
+# Reference API #
+
+https://github.com/chatie/wechaty  
+https://github.com/chatie/wechaty/issues  
+https://github.com/chatie/wechaty/wiki
