@@ -32,6 +32,20 @@ var selectData = function(db, whereStr, callback) {
     });
 }
 
+//删除
+var delData = function(db, whereStr, callback) {
+    //连接到表  
+    var collection = db.collection('site');
+    //删除数据
+    collection.remove(whereStr, function(err, result) {
+        if (err) {
+            console.log('Error:' + err);
+            return;
+        }
+        callback(result);
+    });
+}
+
 const bot = Wechaty.instance()
 
 var express = require('express');
@@ -60,12 +74,22 @@ bot
     console.log(`${user} logout!`)
 })
 
+.on('room-join', (room, inviteeList, inviter) => {
+    const nameList = inviteeList.map(c => c.name()).join(',')
+    console.log(`Room ${room.topic()} got new member ${nameList}, invited by ${inviter}`)
+})
+
+.on('room-leave', (room, leaverList) => {
+    const nameList = leaverList.map(c => c.name()).join(',')
+    console.log(`Room ${room.topic()} lost member ${nameList}`)
+})
+
 .on('message', async function(message) {
     const contact = message.from()
     const content = message.content()
     const room = message.room()
 
-    if (/out/.test(content)) {
+    if (/^退群$/i.test(content)) {
         let keyroom = await Room.find({ topic: "test" })
         if (keyroom) {
             await keyroom.say("Remove from the room", contact)
@@ -119,10 +143,23 @@ bot
         if (/^确认$/i.test(message.content()) && !message.self()) {
             message.say('恭喜您，审核通过');
             MongoClient.connect(DB_CONN_STR, function(err, db) {
-                console.log("连接成功！");
-                console.log(response)
+                //console.log("连接成功！");
+                //console.log(response)
                 insertData(db, response, function(result) {
                     console.log(result);
+                    db.close();
+                });
+            });
+            MongoClient.connect(DB_CONN_STR, function(err, db) {
+                console.log('连接成功');
+                var whereStr = {}
+                selectData(db, whereStr, function(result) {
+                    //message.say('http://192.168.1.111:8081/info');
+                    app.get('/info', function(req, res) {
+                        res.render('index', {
+                            arrs: result
+                        });
+                    })
                     db.close();
                 });
             });
@@ -162,19 +199,3 @@ var server = app.listen(8081, function() {
     console.log("应用实例，访问地址为 http://%s:%s", host, port)
 
 })
-
-MongoClient.connect(DB_CONN_STR, function(err, db) {
-    console.log('连接成功');
-    var whereStr = {}
-    selectData(db, whereStr, function(result) {
-        console.log(result);
-        
-        //message.say('http://192.168.1.111:8081/info');
-        app.get('/info', function(req, res) {
-            res.render('index', {
-                arrs: result
-            });
-        })
-        db.close();
-    });
-});
