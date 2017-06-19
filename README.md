@@ -1,4 +1,4 @@
-![](http://i.imgur.com/ZvTvIgZ.png)
+![](http://i.imgur.com/3CYTsmS.png)
 
 # wechaty聊天机器人 #
 
